@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>地图缩放示例</title>
+    <link rel="stylesheet" href="css/ol.css" type="text/css">
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+    <script src="http://openlayers.org/en/v3.17.1/build/ol.js"></script>
+    <style>
+    .map {
+        width: 100%;
+        height: 800px;
+    }
+    
+    a {
+        margin-left: 6px;
+        margin-top: 10px;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="map" class="map"></div>
+    <a href="#" data-type="global" title="全图" class="btn btn-info"><i class="fa fa-globe"></i></a>
+    <a href="#" data-type="zoomout" title="缩小" class="btn btn-info"><i class="fa fa-search-minus"></i></a>
+    <a href="#" data-type="zoomin" title="放大" class="btn btn-info"><i class="fa fa-search-plus"></i></a>
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript">
+    var map = new ol.Map({
+        layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            })
+        ],
+        target: 'map',
+        logo:false,
+        controls: ol.control.defaults({
+            attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+                collapsible: true
+            })
+        }),
+        view: new ol.View({
+            center: [0, 0],
+            zoom: 2
+        })
+    });
+    $("a").on('click', function() {
+        var view = map.getView();
+        var zoom = view.getZoom();
+        var type = $(this).data("type");
+        switch (type) {
+            case 'global':
+                {
+
+                    break;
+                }
+            case 'zoomin':
+                {
+
+                    view.setZoom(zoom + 1);
+                    break;
+                }
+            case 'zoomout':
+                {
+                    view.setZoom(zoom - 1);
+                    break;
+                }
+        }
+
+    });
+    </script>
+</body>
+
+</html>

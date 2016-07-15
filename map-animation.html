@@ -1,0 +1,231 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>地图动画示例</title>
+    <link rel="stylesheet" href="css/ol.css" type="text/css">
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+    <script src="http://openlayers.org/en/v3.17.1/build/ol.js"></script>
+    <style>
+    .map {
+        width: 100%;
+        height: 800px;
+    }
+    
+    a {
+        margin-left: 6px;
+        margin-top: 10px;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="map" class="map"></div>
+    <a href="#" id="rotate-left" data-type="0" class="btn btn-success"><i class="fa fa-undo"></i></a>
+    <a href="#" id="rotate-right" data-type="1" class="btn btn-success"><i class="fa fa-repeat"></i></a>
+    <a href="#" id="rotate-around-rome" data-type="2" class="btn btn-success">rotate-around-rome</a>
+    <a href="#" id="pan-to-london" data-type="3" class="btn btn-success">pan-to-london</a>
+    <a href="#" id="elastic-to-moscow" data-type="4" class="btn btn-success">elastic-to-moscow</a>
+    <a href="#" id="bounce-to-istanbul" data-type="5" class="btn btn-success">bounce-to-istanbul</a>
+    <a href="#" id="spin-to-rome" data-type="6" class="btn btn-success">spin-to-rome</a>
+    <a href="#" id="fly-to-bern" data-type="7" class="btn btn-success">fly-to-bern</a>
+    <a href="#" id="spiral-to-madrid" data-type="8" class="btn btn-success">spiral-to-madrid</a>
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript">
+    // from https://github.com/DmitryBaranovskiy/raphael
+    function bounce(t) {
+        var s = 7.5625,
+            p = 2.75,
+            l;
+        if (t < (1 / p)) {
+            l = s * t * t;
+        } else {
+            if (t < (2 / p)) {
+                t -= (1.5 / p);
+                l = s * t * t + 0.75;
+            } else {
+                if (t < (2.5 / p)) {
+                    t -= (2.25 / p);
+                    l = s * t * t + 0.9375;
+                } else {
+                    t -= (2.625 / p);
+                    l = s * t * t + 0.984375;
+                }
+            }
+        }
+        return l;
+    }
+
+    // from https://github.com/DmitryBaranovskiy/raphael
+    function elastic(t) {
+        return Math.pow(2, -10 * t) * Math.sin((t - 0.075) * (2 * Math.PI) / 0.3) + 1;
+    }
+
+    var london = ol.proj.fromLonLat([-0.12755, 51.507222]);
+    var moscow = ol.proj.fromLonLat([37.6178, 55.7517]);
+    var istanbul = ol.proj.fromLonLat([28.9744, 41.0128]);
+    var rome = ol.proj.fromLonLat([12.5, 41.9]);
+    var bern = ol.proj.fromLonLat([7.4458, 46.95]);
+    var madrid = ol.proj.fromLonLat([-3.683333, 40.4]);
+
+    var view = new ol.View({
+        // the view's initial state
+        center: istanbul,
+        zoom: 6
+    });
+
+    var map = new ol.Map({
+        layers: [
+            new ol.layer.Tile({
+                preload: 4,
+                source: new ol.source.OSM()
+            })
+        ],
+        // Improve user experience by loading tiles while animating. Will make
+        // animations stutter on mobile or slow devices.
+        loadTilesWhileAnimating: true,
+        target: 'map',
+        controls: ol.control.defaults({
+            attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+                collapsible: false
+            })
+        }),
+        view: view
+    });
+
+    $("a").on('click', function() {
+        var type = $(this).data("type");
+        switch (type) {
+            case 0:
+                {
+                    var rotateLeft = ol.animation.rotate({
+                        duration: 2000,
+                        rotation: -4 * Math.PI
+                    });
+                    map.beforeRender(rotateLeft);
+                    break;
+                }
+            case 1:
+                {
+
+                    var rotateRight = ol.animation.rotate({
+                        duration: 2000,
+                        rotation: 4 * Math.PI
+                    });
+                    map.beforeRender(rotateRight);
+                    break;
+                }
+            case 2:
+                {
+                    var currentRotation = view.getRotation();
+                    var rotateAroundRome = ol.animation.rotate({
+                        anchor: rome,
+                        duration: 1000,
+                        rotation: currentRotation
+                    });
+                    map.beforeRender(rotateAroundRome);
+                    view.rotate(currentRotation + (Math.PI / 2), rome);
+                    break;
+                }
+            case 3:
+                {
+                    var pan = ol.animation.pan({
+                        duration: 2000,
+                        source: /** @type {ol.Coordinate} */ (view.getCenter())
+                    });
+                    map.beforeRender(pan);
+                    view.setCenter(london);
+                    break;
+                }
+            case 4:
+                {
+                    var pan = ol.animation.pan({
+                        duration: 2000,
+                        easing: elastic,
+                        source: (view.getCenter())
+                    });
+                    map.beforeRender(pan);
+                    view.setCenter(moscow);
+                    break;
+                }
+            case 5:
+                {
+                    var pan = ol.animation.pan({
+                        duration: 2000,
+                        easing: bounce,
+                        source:  (view.getCenter())
+                    });
+                    map.beforeRender(pan);
+                    view.setCenter(istanbul);
+
+                    break;
+                }
+            case 6:
+                {
+                    var duration = 2000;
+                    var start = +new Date();
+                    var pan = ol.animation.pan({
+                        duration: duration,
+                        source: (view.getCenter()),
+                        start: start
+                    });
+                    var rotate = ol.animation.rotate({
+                        duration: duration,
+                        rotation: 2 * Math.PI,
+                        start: start
+                    });
+                    map.beforeRender(pan, rotate);
+                    view.setCenter(rome);
+                    break;
+                }
+            case 7:
+                {
+                    var duration = 2000;
+                    var start = +new Date();
+                    var pan = ol.animation.pan({
+                        duration: duration,
+                        source:  (view.getCenter()),
+                        start: start
+                    });
+                    var bounce = ol.animation.bounce({
+                        duration: duration,
+                        resolution: 4 * view.getResolution(),
+                        start: start
+                    });
+                    map.beforeRender(pan, bounce);
+                    view.setCenter(bern);
+
+                    break;
+                }
+            case 8:
+                {
+
+                    var duration = 2000;
+                    var start = +new Date();
+                    var pan = ol.animation.pan({
+                        duration: duration,
+                        source: (view.getCenter()),
+                        start: start
+                    });
+                    var bounce = ol.animation.bounce({
+                        duration: duration,
+                        resolution: 2 * view.getResolution(),
+                        start: start
+                    });
+                    var rotate = ol.animation.rotate({
+                        duration: duration,
+                        rotation: -4 * Math.PI,
+                        start: start
+                    });
+                    map.beforeRender(pan, bounce, rotate);
+                    view.setCenter(madrid);
+                    break;
+                }
+        }
+
+    });
+    </script>
+</body>
+
+</html>
