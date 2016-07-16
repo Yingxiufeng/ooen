@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>地图控件demo</title>
+    <link rel="stylesheet" href="css/ol.css" type="text/css">
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="thirdparty/iCheck/square/blue.css">
+    <script src="http://openlayers.org/en/v3.17.1/build/ol.js"></script>
+    <style>
+    .map {
+        width: 100%;
+        height: 800px;
+    }
+    
+    .opt-btn {
+        margin-left: 6px;
+        margin-top: 10px;
+        width: 100%;
+        text-align: center;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="map" class="map"></div>
+    <div class="opt-btn">
+        <input type="checkbox" name="" id="zoom">&nbsp;缩放
+        <input type="checkbox" name="" id="fullscreen">&nbsp;全屏
+        <input type="checkbox" name="" id="attr" checked disabled>&nbsp;信息
+        <input type="checkbox" name="" id="scaleline">&nbsp;比例尺
+        <input type="checkbox" name="" id="overviewmap">&nbsp;鹰眼图
+    </div>
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <!-- Bootstrap 3.3.6 -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- iCheck -->
+    <script src="thirdparty/iCheck/icheck.min.js"></script>
+    <script type="text/javascript">
+    var map = new ol.Map({
+        layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            })
+        ],
+        target: 'map',
+        logo: false,
+        controls: ol.control.defaults({
+            attributionOptions: ({
+                collapsible: true
+            })
+
+        }),
+        view: new ol.View({
+            center: [0, 0],
+            zoom: 2
+        })
+    });
+    $(function() {
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' // optional
+        });
+    });
+    </script>
+</body>
+
+</html>

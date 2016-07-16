@@ -2,6 +2,7 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
     <title>地图缩放示例</title>
     <link rel="stylesheet" href="css/ol.css" type="text/css">
     <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
@@ -27,6 +28,8 @@
     <a href="#" data-type="zoomin" title="放大" class="btn btn-info"><i class="fa fa-search-plus"></i></a>
     <script src="js/jquery-1.11.1.min.js"></script>
     <script type="text/javascript">
+    var initView = null;
+
     var map = new ol.Map({
         layers: [
             new ol.layer.Tile({
@@ -34,17 +37,22 @@
             })
         ],
         target: 'map',
-        logo:false,
+        logo: false,
         controls: ol.control.defaults({
-            attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+            attributionOptions: ({
                 collapsible: true
             })
+
         }),
         view: new ol.View({
             center: [0, 0],
             zoom: 2
         })
     });
+    map.once('postrender', function() {
+        debugger;
+        initView = this.getView();
+    }, map);
     $("a").on('click', function() {
         var view = map.getView();
         var zoom = view.getZoom();
@@ -53,6 +61,9 @@
             case 'global':
                 {
 
+
+                    if (initView != undefined)
+                        map.setView(initView);
                     break;
                 }
             case 'zoomin':
