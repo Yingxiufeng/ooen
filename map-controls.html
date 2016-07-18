@@ -28,11 +28,11 @@
 <body>
     <div id="map" class="map"></div>
     <div class="opt-btn">
-        <input type="checkbox" name="" id="zoom">&nbsp;缩放
-        <input type="checkbox" name="" id="fullscreen">&nbsp;全屏
         <input type="checkbox" name="" id="attr" checked disabled>&nbsp;信息
-        <input type="checkbox" name="" id="scaleline">&nbsp;比例尺
-        <input type="checkbox" name="" id="overviewmap">&nbsp;鹰眼图
+        <input type="checkbox" data-control="zoom" id="zoom">&nbsp;缩放
+        <input type="checkbox" data-control="fullscreen" id="fullscreen">&nbsp;全屏
+        <input type="checkbox" data-control="scaleline" id="scaleline">&nbsp;比例尺
+        <input type="checkbox" data-control="overviewmap" id="overviewmap">&nbsp;鹰眼图
     </div>
     <script src="js/jquery-1.11.1.min.js"></script>
     <!-- Bootstrap 3.3.6 -->
@@ -51,7 +51,8 @@
         controls: ol.control.defaults({
             attributionOptions: ({
                 collapsible: true
-            })
+            }),
+            zoom: false
 
         }),
         view: new ol.View({
@@ -59,13 +60,69 @@
             zoom: 2
         })
     });
+    var fsControl = new ol.control.FullScreen({});
+    var overviewControl = new ol.control.OverviewMap({
+        view: map.getView()
+    });
+    var zoomControl = new ol.control.Zoom({
+
+    });
+    var slControl = new ol.control.ScaleLine({});
+
     $(function() {
         $('input').iCheck({
             checkboxClass: 'icheckbox_square-blue',
             radioClass: 'iradio_square-blue',
             increaseArea: '20%' // optional
         });
+
+        $('input').on('ifChecked', function(event) {
+            toggleControl($(this).data("control"), true);
+        });
+        $('input').on('ifUnchecked', function(event) {
+            toggleControl($(this).data("control"), false);
+        });
     });
+
+    function toggleControl(name, visible) {
+
+        switch (name) {
+            case 'zoom':
+                {
+                    if (visible == true)
+                        map.addControl(zoomControl);
+                    else
+                        map.removeControl(zoomControl);
+                    break;
+                }
+            case 'fullscreen':
+                {
+                    if (visible == true)
+                        map.addControl(fsControl);
+                    else
+                        map.removeControl(fsControl);
+                    break;
+                }
+            case 'scaleline':
+                {
+
+                    if (visible == true)
+                        map.addControl(slControl);
+                    else
+                        map.removeControl(slControl);
+                    break;
+                }
+            case 'overviewmap':
+                {
+
+                    if (visible == true)
+                        map.addControl(overviewControl);
+                    else
+                        map.removeControl(overviewControl);
+                    break;
+                }
+        }
+    }
     </script>
 </body>
 
