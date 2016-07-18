@@ -22,6 +22,16 @@
         width: 100%;
         text-align: center;
     }
+    
+    .ol-scale-line {
+        margin-left: 100px;
+    }
+    
+    .ol-mouse-position-new {
+        bottom: 8px;
+        right: 50px;
+        position: absolute;
+    }
     </style>
 </head>
 
@@ -32,7 +42,10 @@
         <input type="checkbox" data-control="zoom" id="zoom">&nbsp;缩放
         <input type="checkbox" data-control="fullscreen" id="fullscreen">&nbsp;全屏
         <input type="checkbox" data-control="scaleline" id="scaleline">&nbsp;比例尺
+        <input type="checkbox" data-control="globe" id="globe">&nbsp;全图
+        <input type="checkbox" data-control="mousePos" id="mousePos">&nbsp;坐标点
         <input type="checkbox" data-control="overviewmap" id="overviewmap">&nbsp;鹰眼图
+        <span id="globeSpan" class="fa fa-globe"></span>
     </div>
     <script src="js/jquery-1.11.1.min.js"></script>
     <!-- Bootstrap 3.3.6 -->
@@ -68,6 +81,19 @@
 
     });
     var slControl = new ol.control.ScaleLine({});
+
+    var initExtentControl = new ol.control.ZoomToExtent({
+        tipLabel: '全图',
+        label: $('#globeSpan')[0],
+        extent: map.getView().extent
+    });
+
+    var mouseControl = new ol.control.MousePosition({
+        coordinateFormat: function(coords) {
+            return "x:" + coords[0] + " y:" + coords[1];
+        },
+        className: 'ol-mouse-position-new'
+    });
 
     $(function() {
         $('input').iCheck({
@@ -121,6 +147,24 @@
                         map.removeControl(overviewControl);
                     break;
                 }
+            case 'globe':
+                {
+                    if (visible == true)
+                        map.addControl(initExtentControl);
+                    else
+                        map.removeControl(initExtentControl);
+                    break;
+                }
+            case 'mousePos':
+                {
+                    if (visible == true)
+                        map.addControl(mouseControl);
+                    else
+                        map.removeControl(mouseControl);
+                    break;
+                }
+
+
         }
     }
     </script>
