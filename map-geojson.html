@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>geojson示例</title>
+    <link rel="stylesheet" href="css/ol.css" type="text/css">
+    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
+    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="thirdparty/iCheck/square/blue.css">
+    <script src="http://openlayers.org/en/v3.17.1/build/ol.js"></script>
+    <style>
+    .map {
+        width: 100%;
+        height: 800px;
+    }
+    
+    .opt-containter {
+        margin: 10px;
+        padding: 6px;
+        width: 100%;
+        text-align: center;
+    }
+    </style>
+</head>
+
+<body>
+    <div id="map" class="map"></div>
+    <div class="opt-containter">
+        <input type="checkbox">&nbsp;Point
+        <input type="checkbox">&nbsp;LineString
+        <input type="checkbox">&nbsp;Polygon
+        <input type="checkbox">&nbsp;MultiPolygon
+    </div>
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <!-- Bootstrap 3.3.6 -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- iCheck -->
+    <script src="thirdparty/iCheck/icheck.min.js"></script>
+    <script type="text/javascript">
+    var map = new ol.Map({
+        layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            })
+        ],
+        target: 'map',
+        logo: false,
+        controls: ol.control.defaults({
+            attributionOptions: ({
+                collapsible: true
+            }),
+            zoom: true
+
+        }),
+        view: new ol.View({
+            center: [13225650.583842121, 3770046.2183385347],
+            zoom: 13
+        })
+    });
+     $(function() {
+        $('input').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
+            increaseArea: '20%' // optional
+        });
+
+        $('input').on('ifChecked', function(event) {
+            //toggleControl($(this).data("control"), true);
+        });
+        $('input').on('ifUnchecked', function(event) {
+            //toggleControl($(this).data("control"), false);
+        });
+    });
+    </script>
+</body>
+
+</html>
