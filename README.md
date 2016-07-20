@@ -5,3 +5,4 @@
 - map-animation.html:地图动画效果示例
 - map-zoom.html:地图基本缩放操作示例 
 - map-controls.html：地图控件显示的操作示例
+- map-geojson.html: 加载geojson示例
